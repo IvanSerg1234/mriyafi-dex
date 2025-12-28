@@ -53,7 +53,7 @@ function App() {
            {renderContent()}
         </main>
 
-        <footer className="w-full text-center py-6 text-sm text-gray-600 font-mono">
+        <footer className="w-full text-center py-6 text-sm text-gray-600 font-mono mt-6">
             MriyaFi DEX &copy; 2025
         </footer>
       </div>

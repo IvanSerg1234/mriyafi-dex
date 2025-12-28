@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Settings, ArrowUpDown, Info, Fuel, ChevronDown, X, Search } from 'lucide-react';
 
 import eth from '../assets/img/tokens/eth.png';
@@ -11,36 +11,83 @@ import mfi from '../assets/img/tokens/mfi.png';
 const SwapCard = ({ t }) => {
 
     const tokensList = [
-        { symbol: 'ETH', name: 'Ethereum', img: eth, balance: '2.5' },
-        { symbol: 'USDC', name: 'USD Coin', img: usdc, balance: '4500' },
-        { symbol: 'USDT', name: 'Tether', img: usdt, balance: '3,500.25' },
-        { symbol: 'WBTC', name: 'Wrapped Bitcoin', img: wbtc, balance: '0.05' },
-        { symbol: 'WETH', name: 'Wrapped Ethereum', img: weth, balance: '2.1' },
-        { symbol: 'MFI', name: 'Mriya Finance', img: mfi, balance: '10,000' }
+        { symbol: 'ETH', name: 'Ethereum', img: eth, balance: '2.5', price: 2450.50 },
+        { symbol: 'USDC', name: 'USD Coin', img: usdc, balance: '4500', price: 1.00 },
+        { symbol: 'USDT', name: 'Tether', img: usdt, balance: '3,500.25', price: 1.00 },
+        { symbol: 'WBTC', name: 'Wrapped Bitcoin', img: wbtc, balance: '0.05', price: 98500.00 },
+        { symbol: 'WETH', name: 'Wrapped Ethereum', img: weth, balance: '2.1', price: 2450.50 },
+        { symbol: 'MFI', name: 'Mriya Finance', img: mfi, balance: '10,000', price: 0.05 }
     ];
 
     // STATES
     const [payToken, setPayToken] = useState(tokensList[0]);
     const [receiveToken, setReceiveToken] = useState(tokensList[1]);
 
+    const [payAmount, setPayAmount] = useState('1.5');
+    const [receiveAmount, setReceiveAmount] = useState('');
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState('pay');
 
+    const exchangeRate = payToken.price / receiveToken.price;
+
+    useEffect(() => {
+        if (payAmount) {
+            const val = parseFloat(payAmount);
+            if (!isNaN(val)) {
+                const calculated = (val * exchangeRate).toFixed(6);
+                setReceiveAmount(parseFloat(calculated).toString());
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [payToken, receiveToken]);
+
     // FUNCTIONS
-    // 1.Swap Tokens
+
+    // 1. Pay Input
+    const handlePayInput = (e) => {
+        const value = e.target.value;
+        if (value === '' || /^\d*\.?\d*$/.test(value)) {
+            setPayAmount(value);
+
+            if (value && !isNaN(value)) {
+                const result = (parseFloat(value) * exchangeRate).toFixed(6);
+                setReceiveAmount(parseFloat(result).toString());
+            } else {
+                setReceiveAmount('');
+            }
+        }
+    }
+
+    // 2. Receive Input
+    const handleReceiveInput = (e) => {
+        const value = e.target.value;
+        if (value === '' || /^\d*\.?\d*$/.test(value)) {
+            setReceiveAmount(value);
+
+            if (value && !isNaN(value)) {
+                const result = (parseFloat(value) / exchangeRate).toFixed(6);
+                setPayAmount(parseFloat(result).toString());
+            } else {
+                setPayAmount('');
+            }
+        }
+    }
+
+    // 3.Swap Tokens
     const handleSwapArrows = () => {
         const temp = payToken;
         setPayToken(receiveToken);
         setReceiveToken(temp);
     };
 
-    // 2. Open Tokens List
+    // 4. Open Tokens List
     const openTokenModal = (type) => {
         setModalType(type);
         setIsModalOpen(true);
     };
 
-    // 3. Select Token
+    // 5. Select Token
     const selectToken = (token) => {
         if (modalType === 'pay') {
             if (token.symbol === receiveToken.symbol) {
@@ -84,14 +131,16 @@ const SwapCard = ({ t }) => {
                                 onClick={() => openTokenModal('pay')}
                                 className="flex items-center gap-3 bg-black/30 hover:bg-black/50 px-4 py-2 rounded-full transition-all border border-transparent hover:border-white/10 shrink-0"
                             >
-                                <img src={payToken.img} alt="ETH" className="w-8 h-8 rounded-full shadow-lg object-contain" />
+                                <img src={payToken.img} alt={payToken.symbol} className="w-8 h-8 rounded-full shadow-lg object-contain" />
                                 <span className="text-2xl font-bold text-white">{payToken.symbol}</span>
                                 <ChevronDown size={20} className="text-gray-400"/>
                             </button>
 
                             <input
                                 type="text"
-                                defaultValue="1.5"
+                                value={payAmount}
+                                onChange={handlePayInput}
+                                placeholder='0'
                                 className="bg-transparent text-right text-5xl font-bold text-white outline-none w-full placeholder-gray-600 font-sans"
                             />
                         </div>
@@ -107,7 +156,7 @@ const SwapCard = ({ t }) => {
                     <div className="absolute left-1/2 -translate-x-1/2 -top-6">
                         <button 
                             onClick={handleSwapArrows}
-                            className="bg-[#1a2c38] p-3 rounded-2xl border-[6px] border-[#131823] hover:scale-110 hover:border-[#131823] transition-transform duration-200 cursor-pointer group shadow-xl"
+                            className="bg-[#1a2c38] p-3 rounded-2xl border-[6px] border-[#131823] hover:scale-110 hover:border-[#131823] transition-transform duration-200 cursor-pointer group shadow-xl hover:rotate-180"
                         >
                             <ArrowUpDown size={22} className="text-[#00d4ff] group-hover:text-white transition-colors" />
                         </button>
@@ -126,16 +175,17 @@ const SwapCard = ({ t }) => {
                                 onClick={() => openTokenModal('receive')}
                                 className="flex items-center gap-3 bg-black/30 hover:bg-black/50 px-4 py-2 rounded-full transition-all border border-transparent hover:border-white/10 shrink-0"
                                 >
-                                <img src={receiveToken.img} alt="USDC" className="w-8 h-8 rounded-full shadow-lg object-contain" />
+                                <img src={receiveToken.img} alt={receiveToken.symbol} className="w-8 h-8 rounded-full shadow-lg object-contain" />
                                 <span className="text-2xl font-bold text-white">{receiveToken.symbol}</span>
                                 <ChevronDown size={20} className="text-gray-400"/>
                             </button>
 
                             <input 
-                                type="text"
-                                defaultValue="3672.10"
-                                readOnly
-                                className="bg-transparent text-right text-5xl font-bold text-[#f0dfae] outline-none w-full"
+                                type="text" 
+                                value={receiveAmount}
+                                onChange={handleReceiveInput}
+                                placeholder='0'
+                                className="bg-transparent text-right text-5xl font-bold text-[#f0dfae] outline-none w-full placeholder-gray-600"
                                 />
                         </div>
 
@@ -149,10 +199,12 @@ const SwapCard = ({ t }) => {
                 <div className="mt-6 bg-[#0a0e17]/30 rounded-2xl p-5 border border-white/5 space-y-4">
                     <div className="flex justify-between text-sm font-medium text-gray-400">
                         <span className="flex items-center gap-2 cursor-help hover:text-white transition-colors"><Info size={16}/> {t.rate}</span>
-                        <span className="font-mono text-gray-200 text-base">1 {payToken.symbol} = 2448.10 {receiveToken.symbol}</span>
+                        <span className="font-mono text-gray-200 text-base">
+                            1 {payToken.symbol} = {exchangeRate.toFixed(4)} {receiveToken.symbol}
+                        </span>
                     </div>
                     <div className="flex justify-between text-sm font-medium text-gray-400">
-                        <span className="flex items-center gap-2 cursor-help hover:text-white transition-colors"><Info size={16}/> {t.gas}</span>
+                        <span className="flex items-center gap-2 cursor-help hover:text-white transition-colors"><Fuel size={16}/> {t.gas}</span>
                         <span className="font-mono text-[#f0dfae] flex items-center gap-2 text-base">
                             $4.50 <span className="bg-green-500/10 text-green-400 px-2 py-0.5 rounded text-xs font-bold">FAST</span>
                         </span>
@@ -176,7 +228,7 @@ const SwapCard = ({ t }) => {
                     />
 
                     {/* MODAL WINDOW*/}
-                    <div className="relative w-full h full bg-[#131823] rounded-[2.5rem] p-6 flex flex-col animate-fade-in border border-white/10 shadow-2xl">
+                    <div className="relative w-full h-full bg-[#131823] rounded-[2.5rem] p-6 flex flex-col animate-fade-in border border-white/10 shadow-2xl">
                         
                         {/* TITLE*/}
                         <div className="flex justify-between items-center mb-6">
@@ -193,7 +245,7 @@ const SwapCard = ({ t }) => {
                         <div className="relative mb-4">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
                             <input 
-                                type="text"
+                                type="text" 
                                 placeholder='Search name or address'
                                 className="w-full bg-[#0a0e17] border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#00d4ff]/50"
                             />
@@ -215,12 +267,15 @@ const SwapCard = ({ t }) => {
                                 >
                                     <div className="flex items-center gap-3">
                                         <img src={token.img} alt={token.symbol} className="w-9 h-9 rounded-full" />
-                                        <div className="flex-flex-col">
+                                        <div className="flex flex-col">
                                             <span className="text-white font-bold">{token.symbol}</span>
                                             <span className="text-gray-500 text-xs">{token.name}</span>
                                         </div>
                                     </div>
-                                    <span className="text-white font-mono text-sm">{token.balance}</span>
+                                    <div className="text-right">
+                                        <div className="text-white font-mono text-sm">{token.balance}</div>
+                                        <div className="text-gray-500 text-xs">${token.price}</div>
+                                    </div>
                                 </div>
                             ))}
                         </div>

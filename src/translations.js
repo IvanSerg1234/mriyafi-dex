@@ -20,7 +20,24 @@ export const translations = {
             deposit: 'Deposit',
             tvl: 'TVL',
             vol: 'Volume 24h',
-            apr: 'APR'
+            apr: 'APR',
+
+            poolDetail: {
+                back: 'Back to pools',
+                tvl: 'TVL',
+                vol: 'Volume 24h',
+                fees: 'Fees 24h',
+                apr: 'APR',
+                position: 'Your Position',
+                liquidity: 'Liquidity',
+                feesEarned: 'Fees Earned',
+                add: 'Add Liquidity',
+                remove: 'Remove Liquidity',
+                transactions: 'Recent Transactions',
+                colDate: 'Time',
+                colPrice: 'Price',
+                colLiq: 'Liquidity'
+            }
         }
     },
     ua: {
@@ -42,9 +59,25 @@ export const translations = {
             searchPlaceholder: 'Пошук...',
             hot: 'Топ',
             deposit: 'Вкласти',
-            tvl: 'TVL',
+            tvl: 'Ліквідність (TVL)',
             vol: 'Об\'єм 24г',
-            apr: 'Річних'
+            apr: 'Річних',
+            poolDetail: {
+                back: 'Назад до пулів',
+                tvl: 'Ліквідність (TVL)',
+                vol: 'Об\'єм 24г',
+                fees: 'Комісії 24г',
+                apr: 'Річних (APR)',
+                position: 'Ваша Позиція',
+                liquidity: 'Ліквідність',
+                feesEarned: 'Зароблено',
+                add: 'Додати ліквідність',
+                remove: 'Зняти ліквідність',
+                transactions: 'Останні транзакції',
+                colDate: 'Час',
+                colPrice: 'Ціна',
+                colLiq: 'Сума'
+            }
         }
     }
 };

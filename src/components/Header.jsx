@@ -60,9 +60,21 @@ const Header = ({ activeTab, setActiveTab, lang, toggleLang, t }) => {
                     {/* LANGUAGE */}
                     <button 
                         onClick={toggleLang}
-                        className="hidden sm:block text-gray-400 hover:text-white hover:bg-white/10 px-3 py-1 rounded-lg transition-all border border-transparent hover:border-white/10"
+                        className="hidden sm:flex items-center gap-1 cursor-pointer hover:bg-white/5 px-3 py-1.5 rounded-lg border border-transparent hover:border-white/10 transition-all"
                     >
-                        [{lang === 'en' ? 'EN' : 'UA'}]
+                        <span className="text-gray-600">[</span>
+                        
+                        <span className={`transition-all ${lang === 'en' ? 'text-[#00d4ff] font-bold shadow-cyan-500/50 drop-shadow-[0_0_5px_rgba(0,212,255,0.8)]' : 'text-gray-500 hover:text-gray-300'}`}>
+                            EN
+                        </span>
+
+                        <span className="text-gray-600">/</span>
+
+                        <span className={`transition-all ${lang === 'ua' ? 'text-[#00d4ff] font-bold shadow-cyan-500/50 drop-shadow-[0_0_5px_rgba(0,212,255,0.8)]' : 'text-gray-500 hover:text-gray-300'}`}>
+                            UA
+                        </span>
+
+                        <span className="text-gray-600">]</span>
                     </button>
 
                     <div className="text-gray-200 bg-white/5 px-5 py-2.5 rounded-xl border border-white/5 hover:border-white/20 hover:bg-white/10 cursor-pointer transition-all flex items-center gap-3 shadow-lg">

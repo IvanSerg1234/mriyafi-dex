@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Search, Flame, Sparkles, ChevronRight } from 'lucide-react';
+import PoolDetail from './PoolDetail';
 
 import eth from '../assets/img/tokens/eth.png';
 import usdc from '../assets/img/tokens/usdc.png';
@@ -8,6 +9,8 @@ import mfi from '../assets/img/tokens/mfi.png';
 
 
 const PoolsCard = ({ t }) => {
+    const [selectedPool, setSelectedPool] = useState(null);
+
     const poolsData = [
         {
             id: 1,
@@ -43,6 +46,20 @@ const PoolsCard = ({ t }) => {
             chartColor: '#00d4ff'
         }
     ];
+
+    if (selectedPool) {
+        return (
+            <PoolDetail
+                pool={selectedPool}
+                onBack={() => setSelectedPool(null)}
+                t={t.poolDetail || {
+                    back: 'Back', tvl: 'TVL', vol: 'Vol', fees: 'Fees', apr: 'APR',
+                    position: 'Position', liquidity: 'Liquidity', feesEarned: 'Earned',
+                    add: 'Add', remove: 'Remove', transactions: 'Transactions'
+                }}
+            />
+        );
+    }
 
     return (
         <div className="w-full max-w-6xl p-4 animate-fade-in relative z-10">
@@ -90,6 +107,8 @@ const PoolsCard = ({ t }) => {
                             }
                         `}
                     >
+                        <div onClick={() => setSelectedPool(pool)} className="absolute inset-0 z-0"></div>
+
                         <div className="flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
                             
                             {/* LEFT PART: Info about pair */}
@@ -154,7 +173,12 @@ const PoolsCard = ({ t }) => {
                                 </div>
 
                                 {/* DEPOSIT BUTTON */}
-                                <button className={`
+                                <button 
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedPool(pool);
+                                    }}
+                                    className={`
                                     w-full md:w-auto px-8 py-3 rounded-2xl text-base font-bold transition-all border tracking-wide shadow-lg
                                     ${pool.isHot
                                         ? 'bg-[#f0dfae]/10 text-[#f0dfae] border-[#f0dfae]/30 hover:bg-[#f0dfae]/20 hover:scale-105'
