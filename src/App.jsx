@@ -201,7 +201,7 @@ function App() {
 
   const memoizedFooter = useMemo(() => (
       <footer className="w-full text-center py-6 text-sm text-gray-600 font-mono mt-6">
-        MriyaFi DEX &copy; 2025
+        MriyaFi DEX &copy; 2026
       </footer>
   ), [])
 
